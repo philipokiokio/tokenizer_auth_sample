@@ -6,6 +6,7 @@ import uuid
 class AccessTokenCases(unittest.TestCase):
     def test_normal_jwt_decode_happy_path(self):
         token_id = uuid.uuid4()
+        print(token_id)
         token_data = {"id": str(token_id)}
         jwt_token = utils.create_access_token(data=token_data)
 
