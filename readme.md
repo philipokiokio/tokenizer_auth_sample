@@ -42,11 +42,14 @@ def verify_access_token(token: str):
 ```
 
 
-The Codebase sample above creates JWT and this token can be decoded with the verify_access_token function.
+The code sample above creates JWT and this token can be decoded with the verify_access_token function.
 
-Idealy instead of strings/messages being returned HTTPException can be raised.
+Ideally instead of strings/messages being returned HTTPException can be raised.
 
-The above is the conventional method, and i propose a top layer. JWT's a Decodeble as can be here, the token generated
+The above is the conventional method, and i propose a top layer signing above the JWT. 
+
+# Example
+A uuid is generated below.
 
 ![alt token_id](/doc_files/token_id.png)
 
@@ -63,7 +66,7 @@ But with my proposed method of creating access token which layers another packag
 This token, thanks to the secret used and algo  used is not decodeble by https://jwt.io. 
 To prove that I will use the JWT above and sign above that token to generate the undecodeble token.
 
-Here is the seconded signed token.
+Here is the second-signed token.
 ![alt signed token](/doc_files/second_signed_token.png)
 
 
