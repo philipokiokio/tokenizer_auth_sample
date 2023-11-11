@@ -27,10 +27,31 @@ token_signer = URLSafeTimedSerializer(secret_key=ITS_DANGEROUS_TOKEN_KEY)
 
 
 def sign_token(jwt_token: str) -> str:
+    """This signs the agrument of jwt_token.
+
+    Args:
+        jwt_token (str): token_data
+
+    Returns:
+        str: signed_token
+    """
     return token_signer.dumps(obj=jwt_token)
 
 
 def resolve_token(signed_token: str, max_age: int):
+    """Takes in a signed token and resolves it with respect to time
+
+    Args:
+        signed_token (str): generated_signed_token
+        max_age (int): Total duration for a token to expire in seconds
+
+    Raises:
+        Exception: This handles Expired Tokens and Badly signed_token
+        which suggests token has been tampered with.
+
+    Returns:
+        str: original_signed_data
+    """
     try:
         return token_signer.loads(s=signed_token, max_age=max_age)
     except (BadTimeSignature, BadSignature) as e:
@@ -39,18 +60,43 @@ def resolve_token(signed_token: str, max_age: int):
 
 
 def create_access_token(data: dict):
+    """Create A JWT shortlived
+
+    Args:
+        data (dict): any
+
+    Returns:
+        str: JWT
+    """
     expire = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES) + datetime.utcnow()
     data.update({"exp": expire})
     return jwt.encode(claims=data, key=SECRET_KEY, algorithm=ALGORITHM)
 
 
 def create_refresh_token(data: dict):
+    """Create A Long Lived JWT
+
+    Args:
+        data (dict): any
+
+    Returns:
+        str: JWT
+    """
     expire = timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES) + datetime.utcnow()
     data.update({"exp": expire})
     return jwt.encode(claims=data, key=REFRESH_SECRET_KEY, algorithm=ALGORITHM)
 
 
 def create_top_level_signed_access_token(data: dict):
+    """Create A JWT shortlived returns urlabled token
+
+    Args:
+        data (dict): any
+
+    Returns:
+        str: top_level_signed_token
+
+    """
     expire = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES) + datetime.utcnow()
     data.update({"exp": expire})
     encoded_jwt = jwt.encode(claims=data, key=SECRET_KEY, algorithm=ALGORITHM)
@@ -60,6 +106,15 @@ def create_top_level_signed_access_token(data: dict):
 
 
 def create_top_level_signed_refresh_token(data: dict):
+    """Create A JWT Longlived returns urlabled token
+
+    Args:
+        data (dict): any
+
+    Returns:
+        str: top_level_signed_token
+
+    """
     expire = timedelta(minutes=REFRESH_TOKEN_EXPIRE_MINUTES) + datetime.utcnow()
     data.update({"exp": expire})
     encoded_jwt = jwt.encode(claims=data, key=REFRESH_SECRET_KEY, algorithm=ALGORITHM)
@@ -70,6 +125,15 @@ def create_top_level_signed_refresh_token(data: dict):
 
 
 def verify_access_token(token: str):
+    """JWT Decoder
+
+    Returns:
+        str| UUID : this returns string in place of an error,
+        this hopes to simulate or represent HTTPExceptions that can be raise in Server-side apps.
+        or
+        UUID which is the embeded data in my case/ testcases.
+    """
+
     # Ideal implementation use redis to black list token example is the below:
     # cache_token = redis_utils.get_token_blacklist(token=token)
     # if cache_token:
@@ -98,6 +162,16 @@ def verify_access_token(token: str):
 
 
 def verify_top_signed_access_token(token: str):
+    """Second Signer Token Decoder.
+
+    Due to the resolve_token function above it would not decode the token if it has expired.
+
+    Returns:
+        str| UUID : this returns string in place of an error,
+        this hopes to simulate or represent HTTPExceptions that can be raise in Server-side apps.
+        or
+        UUID which is the embeded data in my case/ testcases.
+    """
     # Ideal implementation use redis to black list token example is the below:
     # cache_token = redis_utils.get_token_blacklist(token=token)
     # if cache_token:
@@ -135,6 +209,14 @@ def verify_top_signed_access_token(token: str):
 
 
 def verify_refresh_token(token: str):
+    """JWT Decoder
+
+    Returns:
+        str| UUID : this returns string in place of an error,
+        this hopes to simulate or represent HTTPExceptions that can be raise in Server-side apps.
+        or
+        UUID which is the embeded data in my case/ testcases.
+    """
     # cache_token = redis_utils.get_token_blacklist(token=token)
     # if cache_token:
     #     raise HTTPException(detail="black-listed token", status_code=401)
@@ -157,6 +239,16 @@ def verify_refresh_token(token: str):
 
 
 def verify_top_signed_refresh_token(token: str):
+    """Second Signer Token Decoder.
+
+    Due to the resolve_token function above it would not decode the token if it has expired.
+
+    Returns:
+        str| UUID : this returns string in place of an error,
+        this hopes to simulate or represent HTTPExceptions that can be raise in Server-side apps.
+        or
+        UUID which is the embeded data in my case/ testcases.
+    """
     # cache_token = redis_utils.get_token_blacklist(token=token)
     # if cache_token:
     #     raise HTTPException(detail="black-listed token", status_code=401)
