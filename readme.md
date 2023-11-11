@@ -48,14 +48,14 @@ Idealy instead of strings/messages being returned HTTPException can be raised.
 
 The above is the conventional method, and i propose a top layer. JWT's a Decodeble as can be here, the token generated
 
-![alt token_id](/doc_files/Screenshot 2023-11-11 at 14.41.32.png)
+![alt token_id](/doc_files/token_id.png)
 
 Generated JWT
 
-![alt token generated](/doc_files/Screenshot 2023-11-11 at 14.42.55.png)
+![alt token generated](/doc_files/bare_jwt.png)
 
 Decoding the JWT with https://jwt.io
-![alt decoded JWT payload](/doc_files/Screenshot 2023-11-11 at 14.44.00.png)
+![alt decoded JWT payload](/doc_files/bare_jwt_decode.png)
 
 
 But with my proposed method of creating access token which layers another package in python, the itsdangerous package. This uses another signer to sign the generateed JWT and that returns another token.
@@ -64,11 +64,11 @@ This token, thanks to the secret used and algo  used is not decodeble by https:/
 To prove that I will use the JWT above and sign above that token to generate the undecodeble token.
 
 Here is the seconded signed token.
-![alt signed token](/doc_files/Screenshot 2023-11-11 at 14.42.55.png)
+![alt signed token](/doc_files/second_signed_token.png)
 
 
 Here is the failed decode by jwt.io.
-![alt jwt.io decode failed](/doc_files/Screenshot 2023-11-11 at 15.31.18.png)
+![alt jwt.io decode failed](/doc_files/second_signed_token_decode.png)
 
 
 The auth_utils script contains functions with second_signer imbeded to create access and refresh token.
